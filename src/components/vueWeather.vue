@@ -25,27 +25,41 @@
 </template>
 
 <script>
+const axios = require('axios').default;
+let postsOnLoadPage;
+if (JSON.parse(localStorage.getItem('posts'))){
+  postsOnLoadPage = JSON.parse(localStorage.getItem('posts'));
+} else{
+  postsOnLoadPage = [];
+}
+
 export default {
   data() {
     return {
-      posts: [],
+      posts: postsOnLoadPage,
       title: '',
-      response: {},
     }
   },
   methods: {
       hanldeDeletePost(postForRemove) {
         this.posts = this.posts.filter(post => post !== postForRemove);
+        localStorage.setItem('posts', JSON.stringify(this.posts))
       },
-      async addCity(city) {
-        const f = await fetch(`http://api.weatherapi.com/v1/current.json?key=29c19b199002483eaaf130349232909&q=${city}&aqi=no`);
-        this.response = await f.json();
-        console.log(this.response);
-        this.posts.push({title: city, response: this.response})
+      addCity(city) {
+        let posts = this.posts;
+        axios.get(`http://api.weatherapi.com/v1/current.json?key=29c19b199002483eaaf130349232909&q=${city}&aqi=no`)
+          .then(function (response) {
+            posts.push({title: city, response:response.data})
+            localStorage.setItem('posts', JSON.stringify(posts))
+          })
       },
-      async reloadApi(post) {
-        const f = await fetch(`http://api.weatherapi.com/v1/current.json?key=29c19b199002483eaaf130349232909&q=${post.response.location.name}&aqi=no`);
-        post.response = await f.json();
+      reloadApi(post) {
+        let posts = this.posts;
+        axios.get(`http://api.weatherapi.com/v1/current.json?key=29c19b199002483eaaf130349232909&q=${post.response.location.name}&aqi=no`)
+          .then(function (response) {
+            post.response = response.data;
+            localStorage.setItem('posts', JSON.stringify(posts))
+          })
       }
   }
 }

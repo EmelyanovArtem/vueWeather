@@ -1,14 +1,14 @@
 <template>
-  <my_posts></my_posts>
+  <vueWeather></vueWeather>
 </template>
 
 <script>
-import my_posts from './components/postsInMain.vue'
+import vueWeather from './components/vueWeather.vue'
 
 export default {
   name: 'App',
   components: {
-    my_posts,
+    vueWeather,
   }
 }
 </script>
